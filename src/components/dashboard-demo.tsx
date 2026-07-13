@@ -94,7 +94,13 @@ export default function DashboardDemo() {
       <div className="absolute top-0 right-1/4 w-[500px] h-[500px] rounded-full bg-primary/10 blur-[150px] pointer-events-none" />
       <div className="absolute bottom-1/4 left-10 w-[400px] h-[400px] rounded-full bg-secondary/5 blur-[120px] pointer-events-none" />
 
-      <div className="mx-auto max-w-[1280px] px-6 lg:px-8 relative z-10">
+      <motion.div 
+        initial={{ opacity: 0, y: 32 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        className="mx-auto max-w-[1280px] px-6 lg:px-8 relative z-10"
+      >
         <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between gap-6 mb-16">
           <div className="max-w-xl">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/20 border border-secondary/30 px-4 py-1.5 text-xs font-semibold text-accent/90 backdrop-blur-sm">
@@ -268,7 +274,7 @@ export default function DashboardDemo() {
                     </span>
                   </div>
 
-                  <div className="divide-y divide-zinc-900 overflow-x-auto max-h-[350px] pr-2 scrollbar-thin">
+                  <div className="divide-y divide-zinc-900 overflow-y-auto max-h-[350px] pr-2 green-scrollbar">
                     {transactions.map((tx, idx) => (
                       <motion.div 
                         key={tx.id} 
@@ -528,7 +534,7 @@ export default function DashboardDemo() {
           </div>
 
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

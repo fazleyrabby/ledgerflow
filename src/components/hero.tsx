@@ -10,66 +10,27 @@ function pad(num: number) {
   return String(num).padStart(3, "0");
 }
 
-const FloatingIcon = ({ 
-  children, 
-  delay, 
-  className,
-  customOpacity 
-}: { 
-  children: React.ReactNode; 
-  delay: number; 
-  className: string;
-  customOpacity: any;
-}) => (
-  <motion.div
-    animate={{ 
-      y: [-12, 12, -12],
-      rotate: [-4, 4, -4]
-    }}
-    style={{ opacity: customOpacity }}
-    transition={{
-      y: {
-        duration: 6,
-        repeat: Infinity,
-        ease: "easeInOut",
-        delay: delay
-      },
-      rotate: {
-        duration: 8,
-        repeat: Infinity,
-        ease: "easeInOut",
-        delay: delay
-      }
-    }}
-    className={`absolute hidden lg:flex items-center justify-center p-4.5 rounded-2xl bg-zinc-950/50 border border-secondary/20 shadow-gold-glow backdrop-blur-sm text-accent z-10 hover:border-accent/40 hover:text-white transition-colors duration-300 ${className}`}
-  >
-    {children}
-  </motion.div>
-);
-
 export default function Hero() {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end start"],
-  });
+  const { scrollY } = useScroll();
 
   const [frame, setFrame] = useState(1);
   const [fadeOut, setFadeOut] = useState(false);
 
-  // Hardware-accelerated scroll reveal opacity transforms (ultra-responsive reveal starting from first scroll)
-  const opacityBadge = useTransform(scrollYProgress, [0, 0.02, 0.82, 1.0], [0.15, 1.0, 1.0, 0.0]);
-  const opacityModern = useTransform(scrollYProgress, [0, 0.82, 1.0], [1.0, 1.0, 0.0]);
-  const opacityFinance = useTransform(scrollYProgress, [0, 0.02, 0.82, 1.0], [0.15, 1.0, 1.0, 0.0]);
-  const opacitySimplified = useTransform(scrollYProgress, [0, 0.01, 0.04, 0.82, 1.0], [0.15, 0.15, 1.0, 1.0, 0.0]);
-  const opacityDescription = useTransform(scrollYProgress, [0, 0.02, 0.06, 0.82, 1.0], [0.0, 0.0, 1.0, 1.0, 0.0]);
-  const opacityCTAs = useTransform(scrollYProgress, [0, 0.04, 0.08, 0.82, 1.0], [0.0, 0.0, 1.0, 1.0, 0.0]);
-  const opacityTrust = useTransform(scrollYProgress, [0, 0.06, 0.10, 0.82, 1.0], [0.0, 0.0, 1.0, 1.0, 0.0]);
-  const iconsOp = useTransform(scrollYProgress, [0, 0.02, 0.10, 0.82, 1.0], [0.10, 0.10, 0.85, 0.85, 0.0]);
+  // Hardware-accelerated scroll reveal opacity transforms using absolute scroll Y pixel values
+  const opacityBadge = useTransform(scrollY, [0, 40, 3200, 3800], [0.15, 1.0, 1.0, 0.0]);
+  const opacityModern = useTransform(scrollY, [0, 3200, 3800], [1.0, 1.0, 0.0]);
+  const opacityFinance = useTransform(scrollY, [0, 60, 3200, 3800], [0.15, 1.0, 1.0, 0.0]);
+  const opacitySimplified = useTransform(scrollY, [0, 40, 120, 3200, 3800], [0.15, 0.15, 1.0, 1.0, 0.0]);
+  const opacityDescription = useTransform(scrollY, [0, 100, 220, 3200, 3800], [0.0, 0.0, 1.0, 1.0, 0.0]);
+  const opacityCTAs = useTransform(scrollY, [0, 180, 320, 3200, 3800], [0.0, 0.0, 1.0, 1.0, 0.0]);
+  const opacityTrust = useTransform(scrollY, [0, 260, 420, 3200, 3800], [0.0, 0.0, 1.0, 1.0, 0.0]);
 
-
-
-  useMotionValueEvent(scrollYProgress, "change", (p) => {
+  useMotionValueEvent(scrollY, "change", (y) => {
+    // The hero scrollable distance is 4 screen heights (500vh parent - 100vh viewport)
+    const heroHeight = typeof window !== "undefined" ? window.innerHeight * 4 : 4000;
+    const p = Math.min(1, Math.max(0, y / heroHeight));
+    
     setFrame(Math.round(p * (TOTAL_FRAMES - 1) + 1));
     setFadeOut(p > 0.85);
   });
@@ -88,16 +49,6 @@ export default function Hero() {
 
         <div className="absolute inset-0 bg-black/60" />
 
-        {/* Floating Fintech Objects */}
-        <FloatingIcon delay={0} customOpacity={iconsOp} className="left-[8%] top-[25%]">
-          <CreditCard className="h-8 w-8 stroke-[1.5]" />
-        </FloatingIcon>
-        <FloatingIcon delay={1.5} customOpacity={iconsOp} className="right-[8%] top-[35%]">
-          <TrendingUp className="h-8 w-8 stroke-[1.5]" />
-        </FloatingIcon>
-        <FloatingIcon delay={3} customOpacity={iconsOp} className="left-[12%] bottom-[25%]">
-          <ShieldCheck className="h-7 w-7 stroke-[1.5]" />
-        </FloatingIcon>
 
         {/* Central Text Box */}
         <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">

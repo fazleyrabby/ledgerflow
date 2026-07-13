@@ -17,7 +17,13 @@ const logos = [
 
 export default function Marquee() {
   return (
-    <section className="py-16 border-y border-white/5 bg-zinc-950/40 backdrop-blur-sm">
+    <motion.section 
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+      className="py-16 border-y border-white/5 bg-zinc-950/40 backdrop-blur-sm"
+    >
       <div className="mx-auto max-w-[1280px] px-6 lg:px-8">
         <p className="text-center text-sm font-medium text-zinc-500 mb-8 tracking-wide">
           Trusted by finance teams at leading companies
@@ -47,7 +53,7 @@ export default function Marquee() {
           </motion.div>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }
 

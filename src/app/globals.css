@@ -22,25 +22,44 @@ body {
   background: #000000;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-  
-  .shadow-gold-glow {
-    box-shadow: 0 0 20px rgba(140, 110, 64, 0.15);
-  }
-
-  .shadow-gold-glow-hover {
-    transition: all 0.3s ease;
-  }
-  .shadow-gold-glow-hover:hover {
-    box-shadow: 0 0 30px rgba(140, 110, 64, 0.3);
-  }
-
-  .bg-radial-grid {
-    background-image: radial-gradient(rgba(140, 110, 64, 0.08) 1px, transparent 1px);
-    background-size: 24px 24px;
-  }
+/* Custom utility classes written at root for Tailwind v4 compatibility */
+.shadow-gold-glow {
+  box-shadow: 0 0 20px rgba(140, 110, 64, 0.15);
 }
+
+.shadow-gold-glow-hover {
+  transition: all 0.3s ease;
+}
+.shadow-gold-glow-hover:hover {
+  box-shadow: 0 0 30px rgba(140, 110, 64, 0.3);
+}
+
+.bg-radial-grid {
+  background-image: radial-gradient(rgba(140, 110, 64, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Custom Green Scrollbar styling */
+.green-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(34, 197, 94, 0.45) rgba(20, 20, 20, 0.4);
+}
+
+.green-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.green-scrollbar::-webkit-scrollbar-track {
+  background: rgba(20, 20, 20, 0.4) !important;
+  border-radius: 10px;
+}
+.green-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(34, 197, 94, 0.45) !important;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+.green-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(34, 197, 94, 0.75) !important;
+}
+
 
