@@ -52,7 +52,7 @@ function Counter({
 
 export default function Stats() {
   return (
-    <section className="py-24 relative overflow-hidden bg-black border-y border-white/5 bg-radial-grid">
+    <section id="stats" className="py-24 relative overflow-hidden bg-black border-y border-white/5 bg-radial-grid">
       <div className="mx-auto max-w-[1280px] px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {stats.map((stat, i) => (

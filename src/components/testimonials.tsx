@@ -29,7 +29,7 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className="py-24 lg:py-32 relative overflow-hidden bg-black">
+    <section id="customers" className="py-24 lg:py-32 relative overflow-hidden bg-black">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-primary/5 blur-[120px] pointer-events-none rounded-full" />
       
       <div className="relative mx-auto max-w-[1280px] px-6 lg:px-8 z-10">

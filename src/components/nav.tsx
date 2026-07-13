@@ -7,9 +7,8 @@ import { Menu, X } from "lucide-react";
 const links = [
   { label: "Features", href: "#features" },
   { label: "Solutions", href: "#solutions" },
-  { label: "Pricing", href: "#pricing" },
+  { label: "Stats", href: "#stats" },
   { label: "Customers", href: "#customers" },
-  { label: "Resources", href: "#resources" },
 ];
 
 export default function Nav() {
