@@ -1,8 +1,8 @@
 "use client";
 
 import { useScroll, motion, useMotionValueEvent, useTransform } from "framer-motion";
-import { useRef, useState } from "react";
-import { ArrowRight, Play, CreditCard, TrendingUp, ShieldCheck } from "lucide-react";
+import { useRef, useEffect } from "react";
+import { ArrowRight, Play } from "lucide-react";
 
 const TOTAL_FRAMES = 180;
 
@@ -12,10 +12,16 @@ function pad(num: number) {
 
 export default function Hero() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
   const { scrollY } = useScroll();
 
-  const [frame, setFrame] = useState(1);
-  const [fadeOut, setFadeOut] = useState(false);
+  // Preload all 180 WebP frames on mount for buttery smooth performance in production
+  useEffect(() => {
+    for (let i = 1; i <= TOTAL_FRAMES; i++) {
+      const img = new Image();
+      img.src = `/hero/frame-${pad(i)}.webp`;
+    }
+  }, []);
 
   // Hardware-accelerated scroll reveal opacity transforms using absolute scroll Y pixel values
   const opacityBadge = useTransform(scrollY, [0, 40, 3200, 3800], [0.15, 1.0, 1.0, 0.0]);
@@ -26,13 +32,19 @@ export default function Hero() {
   const opacityCTAs = useTransform(scrollY, [0, 180, 320, 3200, 3800], [0.0, 0.0, 1.0, 1.0, 0.0]);
   const opacityTrust = useTransform(scrollY, [0, 260, 420, 3200, 3800], [0.0, 0.0, 1.0, 1.0, 0.0]);
 
+  // Bottom exit fades and indicator scroll transforms (no state triggers)
+  const bottomFadeOpacity = useTransform(scrollY, [3000, 3500], [0.0, 1.0]);
+  const scrollIndicatorOpacity = useTransform(scrollY, [0, 350], [1.0, 0.0]);
+
+  // Track scrollY and swap frame source directly on DOM node (skips React re-renders entirely)
   useMotionValueEvent(scrollY, "change", (y) => {
-    // The hero scrollable distance is 4 screen heights (500vh parent - 100vh viewport)
     const heroHeight = typeof window !== "undefined" ? window.innerHeight * 4 : 4000;
     const p = Math.min(1, Math.max(0, y / heroHeight));
+    const currentFrame = Math.min(TOTAL_FRAMES, Math.max(1, Math.round(p * (TOTAL_FRAMES - 1) + 1)));
     
-    setFrame(Math.round(p * (TOTAL_FRAMES - 1) + 1));
-    setFadeOut(p > 0.85);
+    if (imageRef.current) {
+      imageRef.current.src = `/hero/frame-${pad(currentFrame)}.webp`;
+    }
   });
 
   return (
@@ -40,15 +52,15 @@ export default function Hero() {
       <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden bg-black">
         <div className="absolute inset-0">
           <img
-            src={`/hero/frame-${pad(frame)}.webp`}
-            className="w-full h-full object-cover"
+            ref={imageRef}
+            src="/hero/frame-001.webp"
+            className="w-full h-full object-cover select-none pointer-events-none"
             alt=""
             draggable={false}
           />
         </div>
 
-        <div className="absolute inset-0 bg-black/60" />
-
+        <div className="absolute inset-0 bg-black/60 pointer-events-none" />
 
         {/* Central Text Box */}
         <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
@@ -59,7 +71,7 @@ export default function Hero() {
             </span>
           </motion.div>
 
-          <h1 className="mt-6 sm:mt-8 text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold leading-[1.05] tracking-tight text-white">
+          <h1 className="mt-6 sm:mt-8 text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold leading-[1.05] tracking-tight text-white select-none">
             <motion.span style={{ opacity: opacityModern }} className="inline-block">Modern </motion.span>{" "}
             <motion.span style={{ opacity: opacityFinance }} className="inline-block">Finance.</motion.span>
             <br />
@@ -73,7 +85,7 @@ export default function Hero() {
 
           <motion.p
             style={{ opacity: opacityDescription }}
-            className="mx-auto mt-6 max-w-xl text-lg sm:text-xl leading-relaxed text-white/60"
+            className="mx-auto mt-6 max-w-xl text-lg sm:text-xl leading-relaxed text-white/60 select-none"
           >
             One dashboard to manage invoices, payments, analytics, and
             team collaboration. Built for businesses that move fast.
@@ -111,7 +123,7 @@ export default function Hero() {
                 />
               ))}
             </div>
-            <div className="text-sm text-white/50">
+            <div className="text-sm text-white/50 select-none">
               <span className="font-semibold text-white/80">10,000+</span>{" "}
               businesses trust LedgerFlow
             </div>
@@ -120,17 +132,15 @@ export default function Hero() {
 
         {/* Bottom fade */}
         <motion.div
-          animate={{ opacity: fadeOut ? 1 : 0 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          style={{ opacity: bottomFadeOpacity }}
           className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black to-transparent pointer-events-none"
         />
 
         <motion.div
-          animate={{ opacity: fadeOut ? 0 : 1 }}
-          transition={{ duration: 0.4 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-20"
+          style={{ opacity: scrollIndicatorOpacity }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-20 pointer-events-none"
         >
-          <span className="text-xs font-medium text-white/40 tracking-widest uppercase">
+          <span className="text-xs font-medium text-white/40 tracking-widest uppercase select-none">
             Scroll to explore
           </span>
           <motion.div
@@ -143,4 +153,5 @@ export default function Hero() {
     </section>
   );
 }
+
 

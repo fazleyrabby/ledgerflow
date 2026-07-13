@@ -77,11 +77,13 @@ export default function Testimonials() {
               </div>
               <p className="text-sm leading-relaxed text-zinc-300">"{t.content}"</p>
               <div className="mt-6 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary via-secondary to-accent border border-white/10 flex items-center justify-center text-sm font-semibold text-white shadow-md">
-                  {t.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
+                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary via-secondary to-accent border border-white/10 flex items-center justify-center shadow-md select-none">
+                  <span className="text-sm font-bold text-white leading-none">
+                    {t.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")}
+                  </span>
                 </div>
                 <div>
                   <div className="text-sm font-semibold text-white">
