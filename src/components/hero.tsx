@@ -12,15 +12,37 @@ function pad(num: number) {
 
 export default function Hero() {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const imageRef = useRef<HTMLImageElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const imagesRef = useRef<HTMLImageElement[]>([]);
   const { scrollY } = useScroll();
 
-  // Preload all 180 WebP frames on mount for buttery smooth performance in production
-  useEffect(() => {
-    for (let i = 1; i <= TOTAL_FRAMES; i++) {
-      const img = new Image();
-      img.src = `/hero/frame-${pad(i)}.webp`;
+  const drawFrame = (index: number) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    
+    const img = imagesRef.current[index - 1];
+    if (img && img.complete) {
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     }
+  };
+
+  // Preload and store frame elements on mount for instant canvas drawing
+  useEffect(() => {
+    const preloadImages = () => {
+      for (let i = 1; i <= TOTAL_FRAMES; i++) {
+        const img = new Image();
+        img.src = `/hero/frame-${pad(i)}.webp`;
+        if (i === 1) {
+          img.onload = () => {
+            drawFrame(1);
+          };
+        }
+        imagesRef.current.push(img);
+      }
+    };
+    preloadImages();
   }, []);
 
   // Hardware-accelerated scroll reveal opacity transforms using absolute scroll Y pixel values
@@ -36,31 +58,31 @@ export default function Hero() {
   const bottomFadeOpacity = useTransform(scrollY, [3000, 3500], [0.0, 1.0]);
   const scrollIndicatorOpacity = useTransform(scrollY, [0, 350], [1.0, 0.0]);
 
-  // Track scrollY and swap frame source directly on DOM node (skips React re-renders entirely)
+  // Track scrollY and draw onto Canvas directly using requestAnimationFrame (60/120 FPS hardware acceleration)
   useMotionValueEvent(scrollY, "change", (y) => {
     const heroHeight = typeof window !== "undefined" ? window.innerHeight * 4 : 4000;
     const p = Math.min(1, Math.max(0, y / heroHeight));
     const currentFrame = Math.min(TOTAL_FRAMES, Math.max(1, Math.round(p * (TOTAL_FRAMES - 1) + 1)));
     
-    if (imageRef.current) {
-      imageRef.current.src = `/hero/frame-${pad(currentFrame)}.webp`;
-    }
+    requestAnimationFrame(() => {
+      drawFrame(currentFrame);
+    });
   });
 
   return (
     <section ref={sectionRef} className="relative min-h-[500vh]">
       <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden bg-black">
         <div className="absolute inset-0">
-          <img
-            ref={imageRef}
-            src="/hero/frame-001.webp"
+          <canvas
+            ref={canvasRef}
+            width={1920}
+            height={1080}
             className="w-full h-full object-cover select-none pointer-events-none"
-            alt=""
-            draggable={false}
           />
         </div>
 
         <div className="absolute inset-0 bg-black/60 pointer-events-none" />
+
 
         {/* Central Text Box */}
         <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
